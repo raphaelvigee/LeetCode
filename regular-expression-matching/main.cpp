@@ -3,7 +3,6 @@
 //
 
 #include <string>
-#include <vector>
 #include <iostream>
 
 #define isMatchP(s, p) (s && p && (p == '.' || s == p))

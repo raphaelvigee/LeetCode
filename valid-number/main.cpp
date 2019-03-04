@@ -1,28 +1,26 @@
 #include <string>
 #include <iostream>
 
-#define TRIM_CHARS " "
-
 class Solution {
 public:
-    std::string& ltrim(std::string& str, const std::string& chars = TRIM_CHARS){
-        str.erase(0, str.find_first_not_of(chars));
-        return str;
-    }
-
-    std::string& rtrim(std::string& str, const std::string& chars = TRIM_CHARS){
-        str.erase(str.find_last_not_of(chars) + 1);
-        return str;
-    }
-
-    std::string& trim(std::string& str, const std::string& chars = TRIM_CHARS){
-        return ltrim(rtrim(str, chars), chars);
+    void trim2(std::string &str) {
+        std::string trim_chars = " ";
+        std::string::size_type pos = str.find_last_not_of(trim_chars);
+        if (pos != std::string::npos) {
+            str.erase(pos + 1);
+            pos = str.find_first_not_of(trim_chars);
+            if (pos != std::string::npos) {
+                str.erase(0, pos);
+            }
+        } else {
+            str.erase(str.begin(), str.end());
+        }
     }
 
     bool isNumber(std::string s) {
-        s = trim(s);
+        this->trim2(s);
 
-        if(s.empty()) {
+        if (s.empty()) {
             return false;
         }
 
@@ -30,8 +28,6 @@ public:
         bool hadE = false;
         bool hadDot = false;
         bool hadSign = false;
-
-        char lastC = false;
 
         for (auto c : s) {
             if (c == ' ') {
@@ -62,10 +58,9 @@ public:
             } else {
                 return false;
             }
-
-            lastC = c;
         }
 
+        char lastC = s.back();
         if (lastC == 'e' || lastC == '-' || lastC == '+' || (!hadN && lastC == '.')) {
             return false;
         }

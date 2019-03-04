@@ -6,15 +6,13 @@
 #include <vector>
 #include <iostream>
 
+#define isMatchP(s, p) (s && p && (p == '.' || s == p))
+
 class Solution {
 public:
-    bool isMatchP(char s, char p) {
-        return s && p && (p == '.' || s == p);
-    }
-
     bool isMatch(std::string s, std::string p) {
-        unsigned long sc = 0;
-        unsigned long pc = 0;
+        unsigned short sc = 0;
+        unsigned short pc = 0;
         char starChar = false;
         char lastStarChar = false;
 
@@ -22,11 +20,12 @@ public:
             return s.empty();
         }
 
-        while (true) {
-            auto mpc = p.size() - 1;
-            auto msc = s.empty() ? 0 : s.size() - 1;
+        auto mpc = p.size() - 1;
+        auto sEmpty = s.empty();
+        auto msc = sEmpty ? 0 : s.size() - 1;
 
-            char schar = (sc > msc || s.empty()) ? false : s[sc];
+        while (true) {
+            char schar = (sc > msc || sEmpty) ? false : s[sc];
             char cpchar = pc > mpc ? false : p[pc];
             char pchar = starChar ? starChar : cpchar;
 
@@ -35,15 +34,17 @@ public:
             }
 
             if (!starChar && pc < mpc && p[pc + 1] == '*') {
-                starChar = p[pc];
+                starChar = pchar;
                 pc += 2;
 
                 continue;
             }
 
-            if (starChar && schar && pchar && isMatch(s.substr(sc), p.substr(pc))) {
+            auto match = isMatchP(schar, pchar);
+
+            if (starChar && match && isMatch(s.substr(sc), p.substr(pc))) {
                 return true;
-            } else if (isMatchP(schar, pchar)) {
+            } else if (match) {
                 sc++;
 
                 if (!starChar) {
@@ -52,9 +53,7 @@ public:
                 } else {
                     lastStarChar = pchar;
                 }
-            } else if (starChar) {
-                starChar = false;
-            } else if (isMatchP(schar, lastStarChar)) {
+            } else if (starChar || isMatchP(schar, lastStarChar)) {
                 starChar = false;
             } else {
                 return false;
